@@ -1,0 +1,9 @@
+#### ACTIVAR BLOQUEO INDIVIDUAL #####
+# ansible-playbook /etc/ansible/playbooks/linux_wispro_manage_cron/activa.yml -i {{ip}}
+# ex: ansible-playbook /etc/ansible/playbooks/linux_wispro_manage_cron/activa.yml -i 172.30.1.1:22000,
+
+
+#### ACTIVAR DESBLOQUEO INDIVIDUAL #####
+# ansible-playbook /etc/ansible/playbooks/linux_wispro_manage_cron/activa.yml -i {{ip}}
+# ex: ansible-playbook /etc/ansible/playbooks/linux_wispro_manage_cron/desactiva.yml -i 172.30.1.1:22000,
+

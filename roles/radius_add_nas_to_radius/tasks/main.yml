@@ -1,0 +1,15 @@
+- name: Insert new NAS into RADIUS DB
+  community.mysql.mysql_query:
+    login_user: radius
+    login_password: w3stn3t1257
+    login_db: radius
+    query: "INSERT INTO nas (nasname, shortname, secret) SELECT '{{ nas_ip }}', '{{ inventory_hostname }}', '{{ nas_secret }}' FROM DUAL WHERE NOT EXISTS (SELECT nasname FROM nas WHERE nasname='{{ nas_ip }}');"
+  register: data_inserted_into_db
+  delegate_to: radius_login
+
+- name: Restart freeradius process
+  when: data_inserted_into_db.changed
+  ansible.builtin.service:
+    name: freeradius
+    state: restarted
+  delegate_to: radius_login

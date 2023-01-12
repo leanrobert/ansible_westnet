@@ -1,0 +1,9 @@
+---
+- hosts:
+    #- wispro
+    - nat_servers
+  become: true
+  gather_facts: no
+  tasks:
+    - name: PING
+      ansible.builtin.ping:

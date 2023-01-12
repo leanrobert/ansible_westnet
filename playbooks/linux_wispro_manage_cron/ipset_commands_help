@@ -1,0 +1,4 @@
+ipset -N portal-aviso hash:ip
+ipset -N portal-aviso-visto hash:ip
+ipset -N portal-aviso-custom hash:ip
+ipset -N portal-aviso-custom-visto hash:ip

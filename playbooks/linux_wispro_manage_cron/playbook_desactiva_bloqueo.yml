@@ -1,0 +1,15 @@
+---
+- hosts:
+  #- wispro
+  - nat_servers
+  become: true
+  gather_facts: no
+  tasks:
+    - name: Install crontab line for get_address script
+      ansible.builtin.cron:
+        name: "ADD get_address.php script"
+        state: present
+        disabled: yes
+        job: "/usr/bin/php /opt/notificaciones/command_portal/get_address.php"
+    - name: Flush IPSET portal-corte
+      ansible.builtin.shell: ipset -F portal-corte

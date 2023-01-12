@@ -1,0 +1,65 @@
+- name: Install packages for RADIUS Authentication
+  apt:
+    pkg:
+    - sudo
+    - libpam-radius-auth
+    - freeradius-utils
+    state: present
+- name: Clean comments in file "/etc/pam_radius_auth.conf"
+  ansible.builtin.lineinfile:
+    path: /etc/pam_radius_auth.conf
+    regexp: '^#.*$'
+    state: absent
+    backup: yes
+
+- name: Put RADIUS server in file "/etc/pam_radius_auth.conf"
+  ansible.builtin.lineinfile:
+    path: /etc/pam_radius_auth.conf
+    backrefs: yes
+    backup: yes
+    regexp: 'other-server'
+    line: '{{ radius_ip }}  {{ nas_secret }}'
+
+- name: Create users from list Sistemas
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    append: yes
+    shell: /bin/bash
+    groups: sudo
+  with_items: "{{ users_sistemas }}"
+
+- name: Control if RADIUS authentication is in file "/etc/pam.d/sshd"
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/sshd
+    state: absent
+    regexp: 'pam_radius_auth.so'
+  check_mode: true
+  changed_when: false
+  register: check_sshd
+
+- name: Add RADIUS authentication to SSH in file "/etc/pam.d/sshd"
+  ansible.builtin.lineinfile:
+    state: present
+    path: /etc/pam.d/sshd
+    backup: yes
+    insertbefore: BOF
+    line: 'auth sufficient pam_radius_auth.so'
+  when: check_sshd.found == 0
+
+- name: Control if RADIUS authentication is in file "/etc/pam.d/sudo"
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/sudo
+    state: absent
+    regexp: 'pam_radius_auth.so'
+  check_mode: true
+  changed_when: false
+  register: check_sudo
+
+- name: Add RADIUS authentication to SSH in file "/etc/pam.d/sudo"
+  ansible.builtin.lineinfile:
+    state: present
+    path: /etc/pam.d/sudo
+    backup: yes
+    insertbefore: BOF
+    line: 'auth sufficient pam_radius_auth.so'
+  when: check_sudo.found == 0

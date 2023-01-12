@@ -1,0 +1,18 @@
+---
+- hosts: firehol
+  become: true
+  vars:
+    nas_secret: "{{ lookup('password', '/etc/ansible/playbooks/login_radius/.pskradius/' + nas_ip + ' chars=ascii_letters,digits') }}"
+
+  pre_tasks:
+    - set_fact:
+        nas_ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}"
+    - name: GET RADIUS IP
+      setup:
+      delegate_to: radius_login
+      delegate_facts: True
+    - set_fact:
+        radius_ip="{{ hostvars['radius_login']['ansible_facts']['default_ipv4']['address']}}"
+  roles:
+    - radius_add_nas_to_radius
+    - radius_setup_nas

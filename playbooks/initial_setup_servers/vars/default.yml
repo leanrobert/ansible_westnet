@@ -1,0 +1,4 @@
+---
+create_user: devops-westnet
+copy_local_key: "{{ lookup('file', '/etc/ansible/ssh-keys/ansible-rsa-1.pub') }}"
+sys_packages: [ 'curl', 'vim', 'htop', 'iftop', 'snmpd', 'tcpdump' ]
